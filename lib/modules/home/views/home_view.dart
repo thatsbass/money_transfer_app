@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
-
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
@@ -18,14 +17,6 @@ class HomeView extends GetView<HomeController> {
               children: [
                 const BalanceCard(),
                 const SizedBox(height: 20),
-                SearchBar(
-                  hintText: "Search transactions...",
-                  leading: const Icon(Icons.search),
-                  padding: const MaterialStatePropertyAll(
-                    EdgeInsets.symmetric(horizontal: 16.0),
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -35,11 +26,6 @@ class HomeView extends GetView<HomeController> {
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: const Text("This month"),
-                      label: const Icon(Icons.keyboard_arrow_down),
                     ),
                   ],
                 ),
@@ -54,28 +40,28 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: 0,
-        onDestinationSelected: (index) {},
+      bottomNavigationBar: Obx(() => NavigationBar(
+        selectedIndex: controller.currentIndex.value,
+        onDestinationSelected: controller.changeIndex,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.bar_chart),
-            label: 'Summary',
+            icon: Icon(Icons.home),
+            label: 'Accueil',
           ),
           NavigationDestination(
-            icon: Icon(Icons.show_chart),
-            label: 'Markets',
+            icon: Icon(Icons.history),
+            label: 'Historiques',
           ),
           NavigationDestination(
             icon: Icon(Icons.account_balance_wallet),
-            label: 'Portfolio',
+            label: 'Ma carte',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Paramètres',
           ),
         ],
-      ),
+      )),
     );
   }
 }
@@ -88,28 +74,44 @@ class BalanceCard extends GetView<HomeController> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Colors.orange[800],
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Your Balance",
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Your Balance",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              IconButton(
+                icon: Obx(() => Icon(
+                  controller.isBalanceVisible.value
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                  color: Colors.white,
+                )),
+                onPressed: controller.toggleBalanceVisibility,
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Obx(() {
             if (controller.user.value != null) {
               return Text(
-                "\$${controller.user.value!.account.balance.toStringAsFixed(2)}",
+                controller.isBalanceVisible.value
+                    ? "\$${controller.user.value!.account.balance.toStringAsFixed(2)}"
+                    : "****",
                 style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                   color: Colors.white,
+                  color: Colors.white,
                 ),
               );
             } else {
@@ -118,6 +120,7 @@ class BalanceCard extends GetView<HomeController> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               );
             }
@@ -126,14 +129,9 @@ class BalanceCard extends GetView<HomeController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildActionButton(Icons.account_balance_wallet, "Deposit", onTap: controller.onDepositTap),
-              _buildActionButton(Icons.payments, "Withdraw", onTap: controller.onWithdrawTap),
-              _buildActionButton(
-                Icons.swap_horiz,
-                "Transfer",
-                isHighlighted: true,
-                onTap: controller.onTransferTap,
-              ),
+              _buildActionButton(Icons.payments, "Payement", onTap: controller.onWithdrawTap),
+              _buildActionButton(Icons.swap_horiz, "Transfer", isHighlighted: true, onTap: controller.onTransferTap),
+              _buildActionButton(Icons.qr_code_scanner, "scan", onTap: controller.onDepositTap),
             ],
           ),
         ],
@@ -150,19 +148,18 @@ class BalanceCard extends GetView<HomeController> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isHighlighted ? Colors.green : Colors.grey[800],
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: isHighlighted ? Colors.black : Colors.white,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
-              color: isHighlighted ? Colors.green : Colors.grey,
+            style: const TextStyle(
+              color: Colors.white,
             ),
           ),
         ],
@@ -193,12 +190,11 @@ class TransactionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.grey[800],
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               transaction.type == 'RECEIVE' ? Icons.arrow_downward : Icons.arrow_upward,
-              color: transaction.type == 'RECEIVE' ? Colors.green : Colors.red,
+              color: transaction.type == 'RECEIVE' ? Colors.black : Colors.red,
             ),
           ),
           const SizedBox(width: 12),

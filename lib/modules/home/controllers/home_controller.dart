@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../data/models/user_model.dart';
 import '../../../../services/user_service.dart';
@@ -9,12 +10,78 @@ class HomeController extends GetxController {
 
   final user = Rx<UserModel?>(null);
   final transactions = RxList<TransactionModel>([]);
+  final currentIndex = 0.obs;
+  final isBalanceVisible = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadUserData();
     loadTransactions();
+  }
+
+  void toggleBalanceVisibility() {
+    isBalanceVisible.value = !isBalanceVisible.value;
+  }
+
+  void changeIndex(int index) {
+    currentIndex.value = index;
+    if (index == 3) {
+      _showSettingsDialog();
+    }
+  }
+
+  void _showSettingsDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Paramètres'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Infos client'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/client/profile');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.request_page),
+              title: const Text('Demandes'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/client/requests');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.location_on),
+              title: const Text('Trouver des agences à proximité'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/client/agencies');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.lock),
+              title: const Text('Changer le mot de passe'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/client/change-password');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Déconnexion'),
+              onTap: () async {
+                Get.back();
+                await _authService.signOut();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> loadUserData() async {
@@ -32,8 +99,6 @@ class HomeController extends GetxController {
   }
 
   Future<void> loadTransactions() async {
-    // Simuler le chargement des transactions
-    // À remplacer par l'appel API réel
     transactions.value = [
       TransactionModel(
         amount: 100.0,
@@ -41,22 +106,18 @@ class HomeController extends GetxController {
         type: 'RECEIVE',
         sender: Sender(firstName: 'John', lastName: 'Doe', phone: '+261340000000'),
       ),
-      // Ajouter d'autres transactions...
     ];
   }
 
   void onDepositTap() {
-    // Implémenter la logique de dépôt
     Get.toNamed('/client/deposit');
   }
 
   void onWithdrawTap() {
-    // Implémenter la logique de retrait
     Get.toNamed('/client/withdraw');
   }
 
   void onTransferTap() {
-    // Implémenter la logique de transfert
     Get.toNamed('/client/transfer');
   }
 }

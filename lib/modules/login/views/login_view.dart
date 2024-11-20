@@ -64,7 +64,7 @@ class LoginView extends GetView<LoginController> {
           backgroundColor: Colors.white,
           textColor: Colors.black,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 13),
         _buildLoginButton(
           title: AppTexts.continueWithFacebook,
           onPressed: controller.handleFacebookSignIn,
@@ -72,7 +72,7 @@ class LoginView extends GetView<LoginController> {
           backgroundColor: const Color(0xFF1877F2),
           textColor: Colors.white,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 13),
         _buildLoginButton(
           title: AppTexts.continueWithPhone,
           onPressed: controller.showPhoneLoginDialog,
@@ -80,7 +80,7 @@ class LoginView extends GetView<LoginController> {
           backgroundColor: AppColors.primary,
           textColor: Colors.white,
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 20),
         Text(
           'En continuant, vous acceptez nos conditions d\'utilisation et notre politique de confidentialité',
           textAlign: TextAlign.center,
@@ -102,7 +102,7 @@ class LoginView extends GetView<LoginController> {
   }) {
     return Container(
       width: double.infinity,
-      height: 56,
+      height: 40,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
@@ -133,7 +133,7 @@ class LoginView extends GetView<LoginController> {
                   title,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
