@@ -10,60 +10,135 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppTexts.appName,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 40),
-              _buildLoginButton(
-                title: AppTexts.continueWithGoogle,
-                onPressed: controller.handleGoogleSignIn,
-                icon: Icons.g_mobiledata,
-              ),
-              const SizedBox(height: 16),
-              _buildLoginButton(
-                title: AppTexts.continueWithFacebook,
-                onPressed: controller.handleFacebookSignIn,
-                icon: Icons.facebook,
-              ),
-              const SizedBox(height: 16),
-              _buildLoginButton(
-                title: AppTexts.continueWithPhone,
-                onPressed: controller.showPhoneLoginDialog,
-                icon: Icons.phone,
-              ),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 60),
+                _buildHeader(),
+                const SizedBox(height: 60),
+                _buildLoginOptions(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppTexts.appName,
+          style: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Bienvenue sur votre application de transfert d\'argent sécurisée',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[400],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoginOptions() {
+    return Column(
+      children: [
+        _buildLoginButton(
+          title: AppTexts.continueWithGoogle,
+          onPressed: controller.handleGoogleSignIn,
+          icon: 'assets/icons/google.png',
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        ),
+        const SizedBox(height: 16),
+        _buildLoginButton(
+          title: AppTexts.continueWithFacebook,
+          onPressed: controller.handleFacebookSignIn,
+          icon: 'assets/icons/facebook.png',
+          backgroundColor: const Color(0xFF1877F2),
+          textColor: Colors.white,
+        ),
+        const SizedBox(height: 16),
+        _buildLoginButton(
+          title: AppTexts.continueWithPhone,
+          onPressed: controller.showPhoneLoginDialog,
+          icon: 'assets/icons/phone.png',
+          backgroundColor: AppColors.primary,
+          textColor: Colors.white,
+        ),
+        const SizedBox(height: 30),
+        Text(
+          'En continuant, vous acceptez nos conditions d\'utilisation et notre politique de confidentialité',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildLoginButton({
     required String title,
     required VoidCallback onPressed,
-    required IconData icon,
+    required String icon,
+    required Color backgroundColor,
+    required Color textColor,
   }) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon),
-        label: Text(title),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+      height: 56,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: backgroundColor.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Image.asset(
+                  icon,
+                  height: 24,
+                  width: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
